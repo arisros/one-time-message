@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run src/index.ts",
+    "build": "bun run build",
+    "start": "bun run start"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "@rasla/logify": "^4.0.0",
+    "crypto": "^1.0.1",
+    "elysia": "latest",
+    "elysia-xss": "^1.0.3",
+    "logixlysia": "^4.0.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
