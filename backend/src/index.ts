@@ -70,7 +70,18 @@ class Messages {
   }
 
   get(id: string) {
-    return db.query(`SELECT * FROM messages WHERE id = ?`).get(id) ?? null
+    try {
+      console.log(db.query('select * from messages').all())
+      console.log(
+        db.query(`SELECT * FROM messages WHERE id = $id`).get({ $id: id })
+      )
+    } catch (e) {
+      console.log(e)
+    }
+
+    return (
+      db.query(`SELECT * FROM messages WHERE id = $id`).get({ $id: id }) ?? null
+    )
   }
 
   destroy(id: string) {
