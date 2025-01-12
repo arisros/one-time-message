@@ -11,13 +11,17 @@ db.run(`
   CREATE TABLE IF NOT EXISTS messages (
       id TEXT PRIMARY KEY,
       message TEXT NOT NULL,
-      key TEXT NOT NULL,
       createdAt TEXT NOT NULL,
       expiresAt TEXT NOT NULL,
       ipReader TEXT,
       ipWriter TEXT,
       userAgent TEXT
-  )
+  );
+
+  CREATE TABLE IF NOT EXISTS keys (
+      id TEXT PRIMARY KEY,
+      key TEXT NOT NULL
+  );
 `)
 
 type Message = {
@@ -52,13 +56,16 @@ class Messages {
       )
       .join('')
     const insertQuery = db.query(
-      `INSERT INTO messages (id, message, key, createdAt, expiresAt, ipReader, ipWriter, userAgent) VALUES ($id, $message, $key, $createdAt, $expiresAt, $ipReader, $ipWriter, $userAgent)`
+      `INSERT INTO messages (id, message, createdAt, expiresAt, ipReader, ipWriter, userAgent) VALUES ($id, $message, $createdAt, $expiresAt, $ipReader, $ipWriter, $userAgent)`
+    )
+
+    const insertKeyQuery = db.query(
+      `INSERT INTO keys (id, key) VALUES ($id, $key)`
     )
 
     insertQuery.run({
       $id: id,
       $message: encryptedMessage,
-      $key: key, // TODO: will be store differently
       $createdAt: createdAt,
       $expiresAt: expiresAt,
       $ipReader: null,
@@ -66,31 +73,46 @@ class Messages {
       $userAgent: userAgent,
     })
 
+    insertKeyQuery.run({
+      $id: id,
+      $key: key,
+    })
+
     return id
   }
 
   get(id: string) {
-    try {
-      console.log(db.query('select * from messages').all())
-      console.log(
-        db.query(`SELECT * FROM messages WHERE id = $id`).get({ $id: id })
-      )
-    } catch (e) {
-      console.log(e)
+    const message = db
+      .query(`SELECT * FROM messages WHERE id = $id`)
+      .get({ $id: id }) as Message
+    const key = db.query(`SELECT * FROM keys WHERE id = $id`).get({ $id: id })
+
+    if (!message || !key) {
+      return null
     }
 
-    return (
-      db.query(`SELECT * FROM messages WHERE id = $id`).get({ $id: id }) ?? null
-    )
+    return {
+      ...message,
+      ...key,
+      id: message?.id,
+    }
   }
 
   destroy(id: string) {
-    const query = db.query(`DELETE FROM messages WHERE id = $id`)
+    const query = db.query(`DELETE FROM keys WHERE id = $id`)
     query.run({ $id: id })
+  }
+
+  deleteExpiredKeys(now: string, db: Database) {
+    const keysQuery = db.query(
+      `DELETE FROM keys WHERE id NOT IN (SELECT id FROM messages WHERE expiresAt > $date)`
+    )
+    keysQuery.run({ $date: now })
   }
 
   purgeExpired() {
     const now = new Date().toISOString()
+    this.deleteExpiredKeys(now, db)
     const query = db.query(`DELETE FROM messages WHERE expiresAt < $date`)
     query.run({ $date: now })
   }
