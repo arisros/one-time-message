@@ -35,6 +35,7 @@ function HomePage() {
     <CenteredLayout>
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Welcome to Secret Messages</h1>
+        <img src="/logo.png" alt="logo" className="w-24 mx-auto" />
         <NoticeOneTimePad />
         <div className="space-x-4">
           <Link to="/create">

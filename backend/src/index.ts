@@ -58,7 +58,7 @@ class Messages {
     insertQuery.run({
       $id: id,
       $message: encryptedMessage,
-      $key: key,
+      $key: key, // TODO: will be store differently
       $createdAt: createdAt,
       $expiresAt: expiresAt,
       $ipReader: null,
