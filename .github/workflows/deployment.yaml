@@ -31,3 +31,28 @@ jobs:
 
             bun install
             pm2 restart "otm-api" || pm2 start "bun --env-file=.env.production.local run dev" --name "otm-api"
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy Frontend to Remote Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            source ~/.bashrc
+
+            cd apps/one-time-message/frontend
+
+            git pull origin main
+
+            pnpm install
+            pnpm build
+
+            sudo systemctl restart nginx
