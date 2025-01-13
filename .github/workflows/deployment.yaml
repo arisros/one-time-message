@@ -21,6 +21,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
+            source ~/.bashrc
             cd apps/one-time-message
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/id_rsa_git
