@@ -23,10 +23,12 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} <<EOF
             cd apps/one-time-message
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/id_rsa_git
 
             git pull origin main
             cd backend
-            
+
             bun install
             pm2 restart "otm-api" || pm2 start "bun --env-file=.env.production.local run dev" --name "otm-api"
           EOF
