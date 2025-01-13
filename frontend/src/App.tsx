@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { BrowserRouter, Route, Routes, useParams, Link } from "react-router";
 import superagent_ from "superagent";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_ENDPOINT_BASE_URL;
 
 const superagent = superagent_.agent().use((request: superagent_.Request) => {
   request.url = `${BASE_URL}${request.url}`;
