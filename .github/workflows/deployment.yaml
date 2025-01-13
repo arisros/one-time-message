@@ -25,6 +25,8 @@ jobs:
             cd apps/one-time-message
 
             git pull origin main
+            cd backend
+            
             bun install
             pm2 restart "otm-api" || pm2 start "bun --env-file=.env.production.local run dev" --name "otm-api"
           EOF
