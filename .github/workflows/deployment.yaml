@@ -14,14 +14,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
-
       - name: Deploy Backend to Remote Server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} <<EOF
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          script: |
             cd apps/one-time-message
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/id_rsa_git
@@ -31,4 +29,3 @@ jobs:
 
             bun install
             pm2 restart "otm-api" || pm2 start "bun --env-file=.env.production.local run dev" --name "otm-api"
-          EOF
