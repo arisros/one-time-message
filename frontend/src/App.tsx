@@ -24,7 +24,7 @@ async function createMessageService(message: string) {
 
 function CenteredLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 w-v">
+    <div className="flex items-center p-5 justify-center min-h-screen bg-gray-50 w-v">
       {children}
     </div>
   );
@@ -34,7 +34,9 @@ function HomePage() {
   return (
     <CenteredLayout>
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome to Secret Messages</h1>
+        <h1 className="text-2xl font-bold mb-4">
+          Real Privacy Is Self-Controlled.
+        </h1>
         <img src="/logo.png" alt="logo" className="w-24 mx-auto" />
         <NoticeOneTimePad />
         <div className="space-x-4">
